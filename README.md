@@ -27,7 +27,7 @@ You will then have to implement three different logics:
 2. **The logic for the first part of the puzzle**
 3. **The logic for the second part of the puzzle**
 
-> For example, if the firt part of the puzzle is "Given a list of integers, find the greatest one" and the second one 
+> For example, if the first part of the puzzle is "Given a list of integers, find the greatest one" and the second one 
 > "Now find the sum of them", we can do the following:
 > 
 > ```csharp
