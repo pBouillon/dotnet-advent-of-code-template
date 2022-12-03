@@ -2,7 +2,7 @@
 
 [Advent of Code](https://adventofcode.com) template for .NET contenders, focus on the puzzle, let it handle the rest 
 
-> After gaining yours, please leave a small ⭐ to this project too if it has helped you!
+> After gaining yours, consider leaving a small ⭐ to this project too!
 
 ---
 
