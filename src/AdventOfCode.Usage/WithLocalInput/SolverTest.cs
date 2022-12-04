@@ -1,6 +1,6 @@
 ﻿using AdventOfCode.Commons;
 
-namespace AdventOfCode.Usage;
+namespace AdventOfCode.Usage.WithLocalInput;
 
 /// <summary>
 /// Example of how to test the <see cref="Solver{TInput, TResult}"/>

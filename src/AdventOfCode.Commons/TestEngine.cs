@@ -7,15 +7,15 @@ namespace AdventOfCode.Commons;
 /// <summary>
 /// Test engine for the implemented <typeparamref name="TSolver"/>
 /// </summary>
-/// 
+///
 /// <typeparam name="TSolver">
 /// The <see cref="Solver{TInput, TResult}"/> to use
 /// </typeparam>
-/// 
+///
 /// <typeparam name="TInput">
 /// The type of the data used to solve the puzzle
 /// </typeparam>
-/// 
+///
 /// <typeparam name="TResult">
 /// The type of the result of the puzzle
 /// </typeparam>
@@ -32,7 +32,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
     {
         /// <summary>
         /// The data of the input mentionned in the example, in the same form as the
-        /// <see cref="Solver{TInput, TResult}.Input"/>
+        /// <see cref="Solver{TInput, TResult}.PuzzleInput"/>
         /// </summary>
         public TInput Input { get; init; } = default!;
 
@@ -71,8 +71,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
     /// </summary>
     private readonly TSolver _solver;
 
-    protected TestEngine() 
-        => _solver = new TSolver();
+    protected TestEngine() => _solver = new TSolver();
 
     #region Part #1
 
@@ -82,7 +81,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
     public void PartOneExampleTest()
     {
         Skip.If(PartOne.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
-        
+
         // Arrange
         var input = PartOne.Example.Input;
 
@@ -99,10 +98,10 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         Skip.If(PartOne.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
 
         // Arrange
-        var input = _solver.Input;
-        
+        var input = _solver.PuzzleInput;
+
         // Act
-        var result = _solver.PartOne(input);
+        var result = _solver.PartOne(input.Value);
 
         // Assert
         result.Should().Be(PartOne.Solution);
@@ -135,10 +134,10 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         Skip.If(PartTwo.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
 
         // Arrange
-        var input = _solver.Input;
+        var input = _solver.PuzzleInput;
 
         // Act
-        var result = _solver.PartTwo(input);
+        var result = _solver.PartTwo(input.Value);
 
         // Assert
         result.Should().Be(PartTwo.Solution);

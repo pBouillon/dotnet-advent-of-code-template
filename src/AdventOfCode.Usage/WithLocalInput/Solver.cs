@@ -1,6 +1,6 @@
 ﻿using AdventOfCode.Commons;
 
-namespace AdventOfCode.Usage;
+namespace AdventOfCode.Usage.WithLocalInput;
 
 /// <summary>
 /// Example of how to use the <see cref="Solver{TInput, TResult}"/> for a simple puzzle
@@ -13,7 +13,7 @@ namespace AdventOfCode.Usage;
 /// </summary>
 public class Solver : Solver<int[], int>
 {
-    protected override string InputPath => "input.txt";
+    public Solver() : base(inputPath: "WithLocalInput/input.txt") { }
 
     public override int PartOne(int[] input)
         => input.Max();
@@ -21,9 +21,6 @@ public class Solver : Solver<int[], int>
     public override int PartTwo(int[] input)
         => input.Sum();
 
-    public override int[] ReadInput(string inputPath)
-        => File
-            .ReadAllLines(inputPath)
-            .Select(int.Parse)
-            .ToArray();
+    public override int[] ParseInput(IEnumerable<string> input)
+        => input.Select(int.Parse).ToArray();
 }
