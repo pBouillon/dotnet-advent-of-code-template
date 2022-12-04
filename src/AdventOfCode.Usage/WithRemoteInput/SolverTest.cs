@@ -6,6 +6,9 @@ public class SolverTest : TestEngine<Solver, int[], int>
 {
     public override Puzzle PartOne => new()
     {
+        // Once your cookie set in Configuration.Cookie, you can safely toggle this flag
+        ShouldSkipTests = true,
+
         Example = new()
         {
             Input = new[] { 199, 200, 208, 210, 200, 207, 240, 269, 260, 263 },
@@ -16,6 +19,9 @@ public class SolverTest : TestEngine<Solver, int[], int>
 
     public override Puzzle PartTwo => new()
     {
+        // Once your cookie set in Configuration.Cookie, you can safely toggle this flag
+        ShouldSkipTests = true,
+
         Example = new()
         {
             Input = new[] { 199, 200, 208, 210, 200, 207, 240, 269, 260, 263 },
