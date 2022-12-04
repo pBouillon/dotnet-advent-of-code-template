@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Commons;
+﻿using AdventOfCode.Commons.Input;
+
+namespace AdventOfCode.Commons;
 
 /// <summary>
 /// Represent the solver used for a given day
@@ -13,15 +15,38 @@
 /// </typeparam>
 public abstract class Solver<TInput, TResult>
 {
+    public readonly Lazy<TInput> Input;
+
+    private Solver(IPuzzleInputReaderStrategy puzzleInputReader)
+    {
+        Input = new Lazy<TInput>(() =>
+        {
+            var content = puzzleInputReader.ReadInput();
+            return ParseInput(content);
+        });
+    }
+
+    protected Solver(string inputPath)
+        : this(new LocalPuzzleInputReaderStrategy { InputPath = inputPath }) { }
+
+    protected Solver(int year, int day)
+        : this(new RemotePuzzleInputReaderStrategy { Year = year, Day = day }) { }
+
+
     /// <summary>
-    /// The path to the input file (ex: <c>"day1/input.txt"</c>)
+    /// Parse the input file and convert it to <typeparamref name="TInput"/>
+    /// for it to be used as the input of the <see cref="PartOne(TInput)"/>
+    /// and <see cref="PartTwo(TInput)"/>
     /// </summary>
-    protected abstract string InputPath { get; }
-
-    public readonly TInput Input;
-
-    protected Solver()
-        => Input = ReadInput(InputPath);
+    /// 
+    /// <param name="inputPath">
+    /// The path of your puzzle input
+    /// </param>
+    /// 
+    /// <returns>
+    /// The digested input
+    /// </returns>
+    public abstract TInput ParseInput(IEnumerable<string> input);
 
     /// <summary>
     /// Logic for the solution of the first part of the puzzle
@@ -48,19 +73,4 @@ public abstract class Solver<TInput, TResult>
     /// The puzzle's solution
     /// </returns>
     public abstract TResult PartTwo(TInput input);
-
-    /// <summary>
-    /// Parse the input file and convert it to <typeparamref name="TInput"/>
-    /// for it to be used as the input of the <see cref="PartOne(TInput)"/>
-    /// and <see cref="PartTwo(TInput)"/>
-    /// </summary>
-    /// 
-    /// <param name="inputPath">
-    /// The path of your puzzle input
-    /// </param>
-    /// 
-    /// <returns>
-    /// The digested input
-    /// </returns>
-    public abstract TInput ReadInput(string inputPath);
 }

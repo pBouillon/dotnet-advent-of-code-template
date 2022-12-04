@@ -85,7 +85,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
     {
         var input = _solver.Input;
 
-        var result = _solver.PartOne(input);
+        var result = _solver.PartOne(input.Value);
 
         result.Should().Be(PartOne.Solution);
     }
@@ -111,7 +111,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
     {
         var input = _solver.Input;
 
-        var result = _solver.PartTwo(input);
+        var result = _solver.PartTwo(input.Value);
 
         result.Should().Be(PartTwo.Solution);
     }
