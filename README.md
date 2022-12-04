@@ -8,11 +8,15 @@
 
 ## Advantages
 
-In order to solve your puzzle, you might need the debugger from time to time,
-especially as the puzzles become harder.
+In order to solve your puzzle, you might need the debugger from time to time, especially as the puzzles become harder.
 
-This template is built around test projects, in order to take advatage of the
-debugging possibilities and TDD if you want to.
+This template is built around test projects, in order to take advatage of the debugging possibilities and TDD if you want to.
+
+Here are also a bunch of features offered by the template:
+
+- Retrieval of the puzzle input localy or remotely
+- Testing of the puzzle examples
+- Conditionnaly skip the tests of a puzzle if wanted
 
 ## Usage
 
@@ -35,27 +39,41 @@ You will then have to implement three different logics:
 2. **The logic for the first part of the puzzle**
 3. **The logic for the second part of the puzzle**
 
-> For example, if the first part of the puzzle is "Given a list of integers, find the greatest one" and the second one
-> "Now find the sum of them", we can do the following:
->
-> ```csharp
-> public class Solver : Solver<int[], int>
-> {
->     protected override string InputPath => "input.txt";
->
->     public override int PartOne(int[] input)
->         => input.Max();
->
->     public override int PartTwo(int[] input)
->         => input.Sum();
->
->     public override int[] ReadInput(string inputPath)
->         => File
->             .ReadAllLines(inputPath)
->             .Select(int.Parse)
->             .ToArray();
-> }
-> ```
+For example, if the first part of the puzzle is "Given a list of integers, find the greatest one" and the second one "Now find the sum of them", we can do the following:
+
+```csharp
+public class Solver : Solver<int[], int>
+{
+    public Solver() : base(inputPath: "WithLocalInput/input.txt") { }
+
+    public override int PartOne(int[] input)
+        => input.Max();
+
+    public override int PartTwo(int[] input)
+        => input.Sum();
+
+    public override int[] ParseInput(IEnumerable<string> input)
+        => input.Select(int.Parse).ToArray();
+}
+```
+
+If you prefer fetching your input from the server, you can instead specify the date:
+
+```csharp
+public class Solver : Solver<int[], int>
+{
+    public Solver() : base(year: 0000, day: 00) { }
+
+    public override int PartOne(int[] input)
+        => input.Max();
+
+    public override int PartTwo(int[] input)
+        => input.Sum();
+
+    public override int[] ParseInput(IEnumerable<string> input)
+        => input.Select(int.Parse).ToArray();
+}
+```
 
 ### Testing your solution
 
@@ -70,36 +88,54 @@ Those represent the input of each part of the puzzle of the day.
 For each part you will have to specify what the example is (its input and solution) and the solution you are expecting.
 Specifying the example allows the engine to test your solution against a predictible result in order to help you to debug it.
 
-> Keeping our example in mind, the associated `TestEngine` might be:
->
-> ```csharp
-> public class SolverTest : TestEngine<Solver, int[], int>
-> {
->     public override Puzzle PartOne => new()
->     {
->         Example = new()
->         {
->             Input = new[] { 1, 2, 3 },
->             Result = 3,
->         },
->
->         Solution = 5,
->     };
->
->     public override Puzzle PartTwo => new()
->     {
->         Example = new()
->         {
->             Input = new[] { 1, 2, 3 },
->             Result = 6,
->         },
->
->         Solution = 15,
->     };
-> }
-> ```
+Keeping our example in mind, the associated `TestEngine` might be:
+
+```csharp
+public class SolverTest : TestEngine<Solver, int[], int>
+{
+    public override Puzzle PartOne => new()
+    {
+        ShouldSkipTests = false,  // Default to false
+        Example = new()
+        {
+            Input = new[] { 1, 2, 3 },
+            Result = 3,
+        },
+        Solution = 5,
+    };
+
+    public override Puzzle PartTwo => new()
+    {
+        Example = new()
+        {
+            Input = new[] { 1, 2, 3 },
+            Result = 6,
+        },
+        Solution = 15,
+    };
+}
+```
 
 ## Troubleshooting
+
+### How can I find my cookie?
+
+Under the website of the [Advent of Code](https://adventofcode.com), open the dev tools and find the Advent of Code cookie in your storage:
+
+![Example](https://user-images.githubusercontent.com/22640284/205501479-31e2e5ef-d50e-43f8-8a45-4741a473861c.png)
+
+You can then copy its value.
+
+### Where can I set my cookie?
+
+You can either provide the cookie as an environment variable named `AOC_COOKIE`, or directly set it in the `Configuration.cs` file:
+
+```csharp
+public static class Configuration
+{
+    public readonly static string? CookieValue = "YOUR-COOKIE-HERE";
+}
+```
 
 ### My input is missing!
 
