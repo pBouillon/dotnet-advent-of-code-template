@@ -17,7 +17,6 @@ public class SolverTest : TestEngine<Solver, int[], int>
             Input = new[] { 1, 2, 3 },
             Result = 3,
         },
-
         Solution = 5,
     };
 
@@ -28,7 +27,6 @@ public class SolverTest : TestEngine<Solver, int[], int>
             Input = new[] { 1, 2, 3 },
             Result = 6,
         },
-
         Solution = 15,
     };
 }
