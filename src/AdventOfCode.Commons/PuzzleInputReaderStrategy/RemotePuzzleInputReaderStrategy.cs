@@ -1,28 +1,53 @@
 ﻿using System.Net;
 
-namespace AdventOfCode.Commons.Input;
+namespace AdventOfCode.Commons.PuzzleInputReaderStrategy;
 
+/// <summary>
+/// Strategy to retrieve the input from the advent of code server
+/// </summary>
 public class RemotePuzzleInputReaderStrategy : IPuzzleInputReaderStrategy
 {
     private const string AdventOfCodeBaseUrl = "https://adventofcode.com";
-    
-    public const string Cookie = "53616c7465645f5f24418ae85f2ee16ffe226239823eded5e30b5f5dee7817447b92dd8ac6207ed1838b8ef68429c61bac187a1e2b7e7cd1e747ea82fe417a96";
 
+    /// <summary>
+    /// The year targeted by this reader
+    /// </summary>
     public required int Year { get; init; }
-    
+
+    /// <summary>
+    /// The day of the puzzle whose entry we want to retrieve
+    /// </summary>
     public required int Day { get; init; }
 
+    /// <summary>
+    /// The inner HTTP client handler, preconfigured to use cookies and provide the value set in
+    /// <see cref="Configuration.CookieValue"/>
+    /// </summary>
     private static HttpClientHandler Handler => new()
     {
         CookieContainer = GetCookieContainer(),
         UseCookies = true,
     };
 
+    /// <summary>
+    /// The inner HTTP client, preconfigured to make requests to the advent of code URI
+    /// </summary>
     private static HttpClient Client => new(Handler)
     {
         BaseAddress = new Uri(AdventOfCodeBaseUrl),
     };
 
+    /// <summary>
+    /// Create a new cookie container with the one set in <see cref="Configuration.CookieValue"/>
+    /// </summary>
+    /// 
+    /// <returns>
+    /// The cookie container for the <see cref="HttpClientHandler"/> to use
+    /// </returns>
+    /// 
+    /// <exception cref="Exception">
+    /// Thrown if it is called but <see cref="Configuration.CookieValue"/> is not set
+    /// </exception>
     private static CookieContainer GetCookieContainer()
     {
         var container = new CookieContainer();
@@ -31,14 +56,15 @@ public class RemotePuzzleInputReaderStrategy : IPuzzleInputReaderStrategy
         {
             Name = "session",
             Domain = ".adventofcode.com",
-            Value = string.IsNullOrEmpty(Cookie)
+            Value = string.IsNullOrEmpty(Configuration.CookieValue)
                 ? throw new Exception("You need to specify your cookie in order to get your input puzzle")
-                : Cookie,
+                : Configuration.CookieValue,
         });
 
         return container;
     }
 
+    /// <inheritdoc />
     public IEnumerable<string> ReadInput()
     {
         var task = Task.Run(async () =>

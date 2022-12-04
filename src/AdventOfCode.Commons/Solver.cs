@@ -1,4 +1,4 @@
-﻿using AdventOfCode.Commons.Input;
+﻿using AdventOfCode.Commons.PuzzleInputReaderStrategy;
 
 namespace AdventOfCode.Commons;
 
@@ -15,20 +15,33 @@ namespace AdventOfCode.Commons;
 /// </typeparam>
 public abstract class Solver<TInput, TResult>
 {
-    public readonly Lazy<TInput> Input;
+    /// <summary>
+    /// The puzzle input
+    /// </summary>
+    public readonly TInput PuzzleInput;
 
+    /// <summary>
+    /// Create a new solver and initialize its puzzle input based on the provided <see cref="IPuzzleInputReaderStrategy"/>
+    /// </summary>
+    /// <param name="puzzleInputReader">The strategy to use to retriever the puzzle input</param>
     private Solver(IPuzzleInputReaderStrategy puzzleInputReader)
     {
-        Input = new Lazy<TInput>(() =>
-        {
-            var content = puzzleInputReader.ReadInput();
-            return ParseInput(content);
-        });
+        var content = puzzleInputReader.ReadInput();
+        PuzzleInput = ParseInput(content);
     }
 
+    /// <summary>
+    /// Create a new solver with a puzzle input located in a local file
+    /// </summary>
+    /// <param name="inputPath">The path to the file containing the input</param>
     protected Solver(string inputPath)
         : this(new LocalPuzzleInputReaderStrategy { InputPath = inputPath }) { }
 
+    /// <summary>
+    /// Create a new solver that will retrieve the puzzle input from the server
+    /// </summary>
+    /// <param name="year">The year of the current challenge</param>
+    /// <param name="day">The day for which the puzzle input is needed</param>
     protected Solver(int year, int day)
         : this(new RemotePuzzleInputReaderStrategy { Year = year, Day = day }) { }
 

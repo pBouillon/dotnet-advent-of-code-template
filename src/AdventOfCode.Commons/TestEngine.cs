@@ -32,7 +32,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
     {
         /// <summary>
         /// The data of the input mentionned in the example, in the same form as the
-        /// <see cref="Solver{TInput, TResult}.Input"/>
+        /// <see cref="Solver{TInput, TResult}.PuzzleInput"/>
         /// </summary>
         public TInput Input { get; init; } = default!;
 
@@ -71,8 +71,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
     /// </summary>
     private readonly TSolver _solver;
 
-    protected TestEngine()
-        => _solver = new TSolver();
+    protected TestEngine() => _solver = new TSolver();
 
     #region Part #1
 
@@ -99,10 +98,10 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         Skip.If(PartOne.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
 
         // Arrange
-        var input = _solver.Input;
+        var input = _solver.PuzzleInput;
 
         // Act
-        var result = _solver.PartOne(input.Value);
+        var result = _solver.PartOne(input);
 
         // Assert
         result.Should().Be(PartOne.Solution);
@@ -135,10 +134,10 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         Skip.If(PartTwo.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
 
         // Arrange
-        var input = _solver.Input;
+        var input = _solver.PuzzleInput;
 
         // Act
-        var result = _solver.PartTwo(input.Value);
+        var result = _solver.PartTwo(input);
 
         // Assert
         result.Should().Be(PartTwo.Solution);
