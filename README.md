@@ -1,10 +1,18 @@
 # Dotnet Advent of Code
 
-[Advent of Code](https://adventofcode.com) template for .NET contenders, focus on the puzzle, let it handle the rest 
+[Advent of Code](https://adventofcode.com) template for .NET contenders, focus on the puzzle, let it handle the rest
 
 > After gaining yours, consider leaving a small ⭐ to this project too!
 
 ---
+
+## Advantages
+
+In order to solve your puzzle, you might need the debugger from time to time,
+especially as the puzzles become harder.
+
+This template is built around test projects, in order to take advatage of the
+debugging possibilities and TDD if you want to.
 
 ## Usage
 
@@ -27,20 +35,20 @@ You will then have to implement three different logics:
 2. **The logic for the first part of the puzzle**
 3. **The logic for the second part of the puzzle**
 
-> For example, if the first part of the puzzle is "Given a list of integers, find the greatest one" and the second one 
+> For example, if the first part of the puzzle is "Given a list of integers, find the greatest one" and the second one
 > "Now find the sum of them", we can do the following:
-> 
+>
 > ```csharp
 > public class Solver : Solver<int[], int>
 > {
 >     protected override string InputPath => "input.txt";
-> 
+>
 >     public override int PartOne(int[] input)
 >         => input.Max();
-> 
+>
 >     public override int PartTwo(int[] input)
 >         => input.Sum();
-> 
+>
 >     public override int[] ReadInput(string inputPath)
 >         => File
 >             .ReadAllLines(inputPath)
@@ -63,7 +71,7 @@ For each part you will have to specify what the example is (its input and soluti
 Specifying the example allows the engine to test your solution against a predictible result in order to help you to debug it.
 
 > Keeping our example in mind, the associated `TestEngine` might be:
-> 
+>
 > ```csharp
 > public class SolverTest : TestEngine<Solver, int[], int>
 > {
@@ -74,10 +82,10 @@ Specifying the example allows the engine to test your solution against a predict
 >             Input = new[] { 1, 2, 3 },
 >             Result = 3,
 >         },
-> 
+>
 >         Solution = 5,
 >     };
-> 
+>
 >     public override Puzzle PartTwo => new()
 >     {
 >         Example = new()
@@ -85,7 +93,7 @@ Specifying the example allows the engine to test your solution against a predict
 >             Input = new[] { 1, 2, 3 },
 >             Result = 6,
 >         },
-> 
+>
 >         Solution = 15,
 >     };
 > }
