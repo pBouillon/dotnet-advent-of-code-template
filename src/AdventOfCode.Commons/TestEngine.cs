@@ -48,6 +48,14 @@ public abstract class TestEngine<TSolver, TInput, TResult>
     public record Puzzle
     {
         /// <summary>
+        /// If set to <c>true</c>, the tests for this puzzle will be skipped
+        /// </summary>
+        /// <remarks>
+        /// Default is <c>false</c>
+        /// </remarks>
+        public bool ShouldSkipTests { get; init; } = false;
+
+        /// <summary>
         /// The <see cref="Example"/> to use to test <see cref="Solver{TInput, TResult}"/>
         /// </summary>
         public required Example Example { get; init; }
@@ -70,23 +78,33 @@ public abstract class TestEngine<TSolver, TInput, TResult>
 
     public abstract Puzzle PartOne { get; }
 
-    [Fact(DisplayName = "Part One - Example")]
+    [SkippableFact(DisplayName = "Part One - Example")]
     public void PartOneExampleTest()
     {
+        Skip.If(PartOne.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
+        
+        // Arrange
         var input = PartOne.Example.Input;
 
+        // Act
         var result = _solver.PartOne(input);
 
+        // Assert
         result.Should().Be(PartOne.Example.Result);
     }
 
-    [Fact(DisplayName = "Part One - Solution")]
+    [SkippableFact(DisplayName = "Part One - Solution")]
     public void PartOneSolutionTest()
     {
-        var input = _solver.Input;
+        Skip.If(PartOne.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
 
+        // Arrange
+        var input = _solver.Input;
+        
+        // Act
         var result = _solver.PartOne(input);
 
+        // Assert
         result.Should().Be(PartOne.Solution);
     }
 
@@ -96,23 +114,33 @@ public abstract class TestEngine<TSolver, TInput, TResult>
 
     public abstract Puzzle PartTwo { get; }
 
-    [Fact(DisplayName = "Part Two - Example")]
+    [SkippableFact(DisplayName = "Part Two - Example")]
     public void PartTwoExampleTest()
     {
+        Skip.If(PartTwo.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
+
+        // Arrange
         var input = PartTwo.Example.Input;
 
+        // Act
         var result = _solver.PartTwo(input);
 
+        // Assert
         result.Should().Be(PartTwo.Example.Result);
     }
 
-    [Fact(DisplayName = "Part Two - Solution")]
+    [SkippableFact(DisplayName = "Part Two - Solution")]
     public void PartTwoSolutionTest()
     {
+        Skip.If(PartTwo.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
+
+        // Arrange
         var input = _solver.Input;
 
+        // Act
         var result = _solver.PartTwo(input);
 
+        // Assert
         result.Should().Be(PartTwo.Solution);
     }
 
