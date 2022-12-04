@@ -101,7 +101,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         var input = _solver.PuzzleInput;
 
         // Act
-        var result = _solver.PartOne(input);
+        var result = _solver.PartOne(input.Value);
 
         // Assert
         result.Should().Be(PartOne.Solution);
@@ -137,7 +137,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         var input = _solver.PuzzleInput;
 
         // Act
-        var result = _solver.PartTwo(input);
+        var result = _solver.PartTwo(input.Value);
 
         // Assert
         result.Should().Be(PartTwo.Solution);

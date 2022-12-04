@@ -18,7 +18,7 @@ public abstract class Solver<TInput, TResult>
     /// <summary>
     /// The puzzle input
     /// </summary>
-    public readonly TInput PuzzleInput;
+    public readonly Lazy<TInput> PuzzleInput;
 
     /// <summary>
     /// Create a new solver and initialize its puzzle input based on the provided <see cref="IPuzzleInputReaderStrategy"/>
@@ -26,8 +26,11 @@ public abstract class Solver<TInput, TResult>
     /// <param name="puzzleInputReader">The strategy to use to retriever the puzzle input</param>
     private Solver(IPuzzleInputReaderStrategy puzzleInputReader)
     {
-        var content = puzzleInputReader.ReadInput();
-        PuzzleInput = ParseInput(content);
+        PuzzleInput = new Lazy<TInput>(() =>
+        {
+            var content = puzzleInputReader.ReadInput();
+            return ParseInput(content);
+        });
     }
 
     /// <summary>
