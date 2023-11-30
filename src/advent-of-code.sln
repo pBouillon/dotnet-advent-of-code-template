@@ -3,9 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Commons", "AdventOfCode.Commons\AdventOfCode.Commons.csproj", "{79A796F8-0516-48B6-91DD-00EE788954F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Commons", "AdventOfCode.Commons\AdventOfCode.Commons.csproj", "{79A796F8-0516-48B6-91DD-00EE788954F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdventOfCode.Usage", "AdventOfCode.Usage\AdventOfCode.Usage.csproj", "{2CE56D7F-C728-47AB-ADE1-2ABC17EABFAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdventOfCode.Usage", "AdventOfCode.Usage\AdventOfCode.Usage.csproj", "{2CE56D7F-C728-47AB-ADE1-2ABC17EABFAF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E9D5A0EF-004F-4163-8F74-31F89FA01DD0}"
+	ProjectSection(SolutionItems) = preProject
+		..\.github\workflows\dotnet.yml = ..\.github\workflows\dotnet.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
