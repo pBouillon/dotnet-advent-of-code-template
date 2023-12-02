@@ -31,6 +31,14 @@ public abstract class TestEngine<TSolver, TInput, TResult>
     public record Example
     {
         /// <summary>
+        /// The input you would like to test the parser with
+        /// </summary>
+        /// <remarks>
+        /// Leave empty if yuo do not wish to test the parsing
+        /// </remarks>
+        public string[] RawInput { get; init; } = [];
+
+        /// <summary>
         /// The data of the input mentionned in the example, in the same form as the
         /// <see cref="Solver{TInput, TResult}.PuzzleInput"/>
         /// </summary>
@@ -77,6 +85,24 @@ public abstract class TestEngine<TSolver, TInput, TResult>
 
     public abstract Puzzle PartOne { get; }
 
+    [SkippableFact(DisplayName = "Part One - Parsing")]
+    public void PartOneParsingTest()
+    {
+        var shouldBeSkipped = PartOne.ShouldSkipTests
+            || PartOne.Example.RawInput.Length == 0;
+
+        Skip.If(shouldBeSkipped, "Puzzle.ShouldSkipTests has been set to true or no raw input provided, test skipped");
+
+        // Arrange
+        var input = PartOne.Example.RawInput;
+
+        // Act
+        var result = _solver.ParseInput(input);
+
+        // Assert
+        result.Should().BeEquivalentTo(PartOne.Example.Input);
+    }
+
     [SkippableFact(DisplayName = "Part One - Example")]
     public void PartOneExampleTest()
     {
@@ -112,6 +138,24 @@ public abstract class TestEngine<TSolver, TInput, TResult>
     #region Part #2
 
     public abstract Puzzle PartTwo { get; }
+
+    [SkippableFact(DisplayName = "Part Two - Parsing")]
+    public void PartTwoParsingTest()
+    {
+        var shouldBeSkipped = PartTwo.ShouldSkipTests
+            || PartTwo.Example.RawInput.Length == 0;
+
+        Skip.If(shouldBeSkipped, "Puzzle.ShouldSkipTests has been set to true or no raw input provided, test skipped");
+
+        // Arrange
+        var input = PartTwo.Example.RawInput;
+
+        // Act
+        var result = _solver.ParseInput(input);
+
+        // Assert
+        result.Should().BeEquivalentTo(PartTwo.Example.Input);
+    }
 
     [SkippableFact(DisplayName = "Part Two - Example")]
     public void PartTwoExampleTest()

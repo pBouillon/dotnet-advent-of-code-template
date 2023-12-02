@@ -14,7 +14,8 @@ public class SolverTest : TestEngine<Solver, int[], int>
     {
         Example = new()
         {
-            Input = new[] { 1, 2, 3 },
+            RawInput = ["1", "2", "3"],
+            Input = [1, 2, 3],
             Result = 3,
         },
         Solution = 5,
@@ -24,7 +25,8 @@ public class SolverTest : TestEngine<Solver, int[], int>
     {
         Example = new()
         {
-            Input = new[] { 1, 2, 3 },
+            RawInput = ["1", "2", "3"],
+            Input = [1, 2, 3],
             Result = 6,
         },
         Solution = 15,
