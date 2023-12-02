@@ -1,6 +1,6 @@
 # Dotnet Advent of Code
 
-[Advent of Code](https://adventofcode.com) template for .NET contenders, focus on the puzzle, let it handle the rest
+[Advent of Code](https://adventofcode.com) template for .NET contenders, focus on the puzzle, let it take care the rest
 
 > After gaining yours, consider leaving a small ⭐ to this project too!
 
@@ -15,6 +15,7 @@ This template is built around test projects, in order to take advatage of the de
 Here are also a bunch of features offered by the template:
 
 - Retrieval of the puzzle input localy or remotely
+- Testing of your modelization if you would like to
 - Testing of the puzzle examples
 - Conditionnaly skip the tests of a puzzle if wanted
 
@@ -23,7 +24,7 @@ Here are also a bunch of features offered by the template:
 This template exposes two classes: a `Solver` and a `TestEngine`.
 The [.NET CI](.github/workflows/dotnet.yml) is also preconfigured to ensure that all your tests are valid.
 
-To get started with a new year, just create a new xUnit project and add a reference to the `AdventOfCode.Commons` project to it.
+To get started with a new year, just create a new `xUnit` project and add a reference to the `AdventOfCode.Commons` project to it.
 
 > If you want to jump straight to the code for the usage, check the [demo project](src/AdventOfCode.Usage)
 
@@ -115,6 +116,31 @@ public class SolverTest : TestEngine<Solver, int[], int>
     };
 }
 ```
+
+### Testing your parsing
+
+This testing feature allows you to verify the correctness of the `ParseInput` method by
+comparing its output with a manually provided `RawInput`. It's completely optional, so
+you can choose to use it based on your preferences.
+
+If you would like to, define the `RawInput` property along with your `Input` in your `Example`.  
+If the `RawInput` is not set or empty, this part won't be tested.
+
+```cs
+public override Puzzle PartOne => new()
+{
+    Example = new()
+    {
+        // 👇 Since this is defined, a test will run to check if `ParseInput(RawInput)` is equal to `Input`
+        RawInput = ["1", "2", "3"],
+        Input = [1, 2, 3],
+        Result = 3,
+    },
+    Solution = 5,
+};
+```
+
+> Since the example might change from one part to the other, the `RawInput` is defined in each part instead of on the puzzle-level
 
 ## Troubleshooting
 
