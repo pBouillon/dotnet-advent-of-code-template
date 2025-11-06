@@ -11,10 +11,9 @@ namespace AdventOfCode.Usage.WithLocalInput;
 /// 
 /// The second part aims to find the sum of all the numbers
 /// </summary>
-public sealed class Solver : Solver<int[], int>
+public sealed class Solver()
+    : Solver<int[], int>(inputPath: "WithLocalInput/input.txt")
 {
-    public Solver() : base(inputPath: "WithLocalInput/input.txt") { }
-
     public override int PartOne(int[] input)
         => input.Max();
 
@@ -22,5 +21,5 @@ public sealed class Solver : Solver<int[], int>
         => input.Sum();
 
     public override int[] ParseInput(IEnumerable<string> input)
-        => input.Select(int.Parse).ToArray();
+        => [.. input.Select(int.Parse)];
 }

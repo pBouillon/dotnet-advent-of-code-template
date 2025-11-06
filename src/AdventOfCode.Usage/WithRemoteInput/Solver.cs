@@ -2,10 +2,9 @@
 
 namespace AdventOfCode.Usage.WithRemoteInput;
 
-public sealed class Solver : Solver<int[], int>
+public sealed class Solver()
+    : Solver<int[], int>(2021, 01)
 {
-    public Solver() : base(2021, 01) { }
-
     public override int[] ParseInput(IEnumerable<string> input)
         => [.. input.Select(int.Parse)];
 

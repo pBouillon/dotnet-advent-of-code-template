@@ -2,7 +2,8 @@
 
 namespace AdventOfCode.Usage.WithRemoteInput;
 
-public sealed class SolverTest : TestEngine<Solver, int[], int>
+public sealed class RemoteInputSolverTest
+    : TestEngine<Solver, int[], int>
 {
     public override Puzzle PartOne => new()
     {
