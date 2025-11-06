@@ -29,14 +29,14 @@ public abstract partial class TestEngine<TSolver, TInput, TResult>
 
         Skip.If(shouldBeSkipped, "Puzzle.ShouldSkipTests has been set to true or no raw input provided, test skipped");
 
-        // Arrange
-        var input = PartOne.Example.RawInput;
+        // Arrange
+        var input = PartOne.Example.RawInput;
 
-        // Act
-        var result = _solver.ParseInput(input);
+        // Act
+        var result = _solver.ParseInput(input);
 
-        // Assert
-        result.ShouldBeEquivalentTo(PartOne.Example.Input);
+        // Assert
+        result.ShouldBeEquivalentTo(PartOne.Example.Input);
     }
 
     [SkippableFact(DisplayName = "Part One - Example")]
@@ -44,14 +44,14 @@ public abstract partial class TestEngine<TSolver, TInput, TResult>
     {
         Skip.If(PartOne.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
 
-        // Arrange
-        var input = PartOne.Example.Input;
+        // Arrange
+        var input = PartOne.Example.Input;
 
-        // Act
-        var result = _solver.PartOne(input);
+        // Act
+        var result = _solver.PartOne(input);
 
-        // Assert
-        result.ShouldBe(PartOne.Example.Result);
+        // Assert
+        result.ShouldBe(PartOne.Example.Result);
     }
 
     [SkippableFact(DisplayName = "Part One - Solution")]
@@ -59,13 +59,13 @@ public abstract partial class TestEngine<TSolver, TInput, TResult>
     {
         Skip.If(PartOne.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
 
-        // Arrange
-        var input = _solver.PuzzleInput;
+        // Arrange
+        var input = _solver.PuzzleInput;
 
-        // Act
-        var result = _solver.PartOne(input.Value);
+        // Act
+        var result = _solver.PartOne(input.Value);
 
-        // Assert
-        result.ShouldBe(PartOne.Solution);
+        // Assert
+        result.ShouldBe(PartOne.Solution);
     }
 }
