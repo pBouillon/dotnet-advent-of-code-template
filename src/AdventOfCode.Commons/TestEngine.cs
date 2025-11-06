@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-
+﻿using Shouldly;
 using Xunit;
 
 namespace AdventOfCode.Commons;
@@ -39,7 +38,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         public string[] RawInput { get; init; } = [];
 
         /// <summary>
-        /// The data of the input mentionned in the example, in the same form as the
+        /// The data of the input mentioned in the example, in the same form as the
         /// <see cref="Solver{TInput, TResult}.PuzzleInput"/>
         /// </summary>
         public TInput Input { get; init; } = default!;
@@ -100,7 +99,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         var result = _solver.ParseInput(input);
 
         // Assert
-        result.Should().BeEquivalentTo(PartOne.Example.Input);
+        result.ShouldBeEquivalentTo(PartOne.Example.Input);
     }
 
     [SkippableFact(DisplayName = "Part One - Example")]
@@ -115,7 +114,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         var result = _solver.PartOne(input);
 
         // Assert
-        result.Should().Be(PartOne.Example.Result);
+        result.ShouldBe(PartOne.Example.Result);
     }
 
     [SkippableFact(DisplayName = "Part One - Solution")]
@@ -130,7 +129,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         var result = _solver.PartOne(input.Value);
 
         // Assert
-        result.Should().Be(PartOne.Solution);
+        result.ShouldBe(PartOne.Solution);
     }
 
     #endregion
@@ -154,7 +153,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         var result = _solver.ParseInput(input);
 
         // Assert
-        result.Should().BeEquivalentTo(PartTwo.Example.Input);
+        result.ShouldBeEquivalentTo(PartTwo.Example.Input);
     }
 
     [SkippableFact(DisplayName = "Part Two - Example")]
@@ -169,7 +168,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         var result = _solver.PartTwo(input);
 
         // Assert
-        result.Should().Be(PartTwo.Example.Result);
+        result.ShouldBe(PartTwo.Example.Result);
     }
 
     [SkippableFact(DisplayName = "Part Two - Solution")]
@@ -184,7 +183,7 @@ public abstract class TestEngine<TSolver, TInput, TResult>
         var result = _solver.PartTwo(input.Value);
 
         // Assert
-        result.Should().Be(PartTwo.Solution);
+        result.ShouldBe(PartTwo.Solution);
     }
 
     #endregion

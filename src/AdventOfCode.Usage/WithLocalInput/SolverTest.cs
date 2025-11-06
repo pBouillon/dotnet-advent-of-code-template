@@ -8,7 +8,7 @@ namespace AdventOfCode.Usage.WithLocalInput;
 /// For each part of the puzzle, we can specify what the example is and what solution it as, along with the
 /// expected solution for our puzzle input
 /// </summary>
-public class SolverTest : TestEngine<Solver, int[], int>
+public sealed class SolverTest : TestEngine<Solver, int[], int>
 {
     public override Puzzle PartOne => new()
     {

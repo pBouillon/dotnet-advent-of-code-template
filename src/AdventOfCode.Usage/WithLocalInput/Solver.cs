@@ -11,7 +11,7 @@ namespace AdventOfCode.Usage.WithLocalInput;
 /// 
 /// The second part aims to find the sum of all the numbers
 /// </summary>
-public class Solver : Solver<int[], int>
+public sealed class Solver : Solver<int[], int>
 {
     public Solver() : base(inputPath: "WithLocalInput/input.txt") { }
 
