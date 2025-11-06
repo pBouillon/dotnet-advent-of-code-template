@@ -1,52 +1,50 @@
-# Dotnet Advent of Code
+# 🎄 .NET Advent of Code Template
 
-[Advent of Code](https://adventofcode.com) template for .NET contenders, focus on the puzzle, let it take care the rest
+**A ready-to-go **Advent of Code** template for .NET contenders.**
+**Focus on solving the puzzle; we handle the boilerplate, input, and testing.**
 
-> After gaining yours, consider leaving a small ⭐ to this project too!
+This template's core strength is its foundation in **xUnit test projects**, which
+provides two massive advantages for complex AoC puzzles: **seamless debugging** and native support for **Test-Driven Development (TDD)**.
 
----
+Here are the features offered by the template:
 
-## Advantages
+* **Automatic Input Retrieval** (local file or remotely fetches your input for a given day)
+* **Modeling/Parsing Tests** to allow you to model the problem as you want
+* **Example Tests** using provided examples and expected results to ensure your solution satisfies it
+* **Conditional Test Skipping** focus only on the parts you're currently working on
+* Pre-configured **[.NET CI](.github/workflows/dotnet.yml)** to ensure all puzzles are valid
 
-In order to solve your puzzle, you might need the debugger from time to time, especially as the puzzles become harder.
+> If this template helps you earn your stars, consider leaving one on this repository
+> too! ⭐
 
-This template is built around test projects, in order to take advatage of the debugging possibilities and TDD if you want to.
+## Usage & Setup
 
-Here are also a bunch of features offered by the template:
+This template provides two core components: the **`Solver`** (for logic) and the
+**`TestEngine`** (for verification).
 
-- Retrieval of the puzzle input localy or remotely
-- Testing of your modelization if you would like to
-- Testing of the puzzle examples
-- Conditionnaly skip the tests of a puzzle if wanted
+**Setup:** To begin a new year, simply create a new **`xUnit`** project and add a
+reference to the **`AdventOfCode.Commons`** library.
 
-## Usage
+> If you want to jump straight to the code, check out the
+> [demo project](src/AdventOfCode.Usage).
 
-This template exposes two classes: a `Solver` and a `TestEngine`.
-The [.NET CI](.github/workflows/dotnet.yml) is also preconfigured to ensure that all your tests are valid.
+### Solving a New Puzzle
 
-To get started with a new year, just create a new `xUnit` project and add a reference to the `AdventOfCode.Commons` project to it.
+Create a new solver by inheriting the generic `Solver<TInput, TResult>` class,
+where `TInput` is your parsed data model and `TResult` is the expected result type.
 
-> If you want to jump straight to the code for the usage, check the [demo project](src/AdventOfCode.Usage)
+Your `Solver` requires you to implement three core methods:
 
-### Solving a new puzzle
+1.  **`ParseInput`**: Convert raw `IEnumerable<string>` input lines into your strongly-typed `TInput` model.
+2.  **`PartOne`**: Implement the logic for the first part of the puzzle.
+3.  **`PartTwo`**: Implement the logic for the second part of the puzzle.
 
-When working a new day, create a new `Solver` by inheriting the `Solver<TInput, TResult>` class,
-with `TInput` being the type of the input you will be working with and `TResult` the type of the result you are expecting.
-
-You will then have to implement three different logics:
-
-1. **The parsing of the input** in which you will have to convert the raw data from the file you are reading into the `TInput`
-  you will be expecting afterwards
-2. **The logic for the first part of the puzzle**
-3. **The logic for the second part of the puzzle**
-
-For example, if the first part of the puzzle is "Given a list of integers, find the greatest one" and the second one "Now find the sum of them", we can do the following:
+**Example Solver (Local Input):**
 
 ```csharp
-public class Solver : Solver<int[], int>
+public class Solver()
+    : Solver<int[], int>(inputPath: "WithLocalInput/input.txt")
 {
-    public Solver() : base(inputPath: "WithLocalInput/input.txt") { }
-
     public override int PartOne(int[] input)
         => input.Max();
 
@@ -58,53 +56,36 @@ public class Solver : Solver<int[], int>
 }
 ```
 
-If you prefer fetching your input from the server, you can instead specify the date:
+**Example Solver (Remote Input):**
 
 ```csharp
-public class Solver : Solver<int[], int>
-{
-    public Solver() : base(year: 0000, day: 00) { }
-
-    public override int PartOne(int[] input)
-        => input.Max();
-
-    public override int PartTwo(int[] input)
-        => input.Sum();
-
-    public override int[] ParseInput(IEnumerable<string> input)
-        => input.Select(int.Parse).ToArray();
-}
+public class Solver()
+    : Solver<int[], int>(year: 2025, day: 01) { ... }
 ```
 
-### Testing your solution
+### Testing with the Fluent API
 
-Once that your have coded your `Solver`, you may want to test it.
+Once you have implemented your `Solver`, create your test class by inheriting from
+`TestEngine<TSolver, TInput, TResult>`.
 
-To do so, create a new class inheriting from `TestEngine<TSolver, TInput, TResult>`, with `TSolver` the type of your solver and
-`TInput` and `TResult` the same as it.
-
-You will then have to implement two `Puzzle` properties.
-Those represent the input of each part of the puzzle of the day.
-
-For each part you will have to specify what the example is (its input and solution) and the solution you are expecting.
-Specifying the example allows the engine to test your solution against a predictible result in order to help you to debug it.
-
-Keeping our example in mind, the associated `TestEngine` might be:
+You will define the expected inputs and solutions via the `PartOne` and `PartTwo`
+properties.
 
 ```csharp
-public class SolverTest : TestEngine<Solver, int[], int>
+public sealed class SolverTest : TestEngine<Solver, int[], int>
 {
-    public override Puzzle PartOne => new()
-    {
-        ShouldSkipTests = false,  // Default to false
-        Example = new()
-        {
-            Input = new[] { 1, 2, 3 },
-            Result = 3,
-        },
-        Solution = 5,
-    };
+    // Define Part One using the fluent builder
+    public override Puzzle PartOne => PuzzleBuilder
+        // 1. The raw input lines for the example
+        .FromInput(["1", "2", "3"])
+        // 2. The expected result of the ParseInput method (TInput)
+        .ParsedAs([1, 2, 3])
+        // 3. The expected result for the example input
+        .ExpectsResult(3)
+        // 4. The correct answer for the main puzzle input
+        .WithTheActualSolutionBeing(5);
 
+    // You can also directly create the Puzzle object
     public override Puzzle PartTwo => new()
     {
         Example = new()
@@ -117,44 +98,86 @@ public class SolverTest : TestEngine<Solver, int[], int>
 }
 ```
 
-### Testing your parsing
+### Skipping Tests
 
-This testing feature allows you to verify the correctness of the `ParseInput` method by
-comparing its output with a manually provided `RawInput`. It's completely optional, so
-you can choose to use it based on your preferences.
+If you are stuck on a puzzle part, you can conditionally **skip all tests** for
+that part by using the builder, or setting `ShouldSkipTests = true` on the `Puzzle`
+definition:
 
-If you would like to, define the `RawInput` property along with your `Input` in your `Example`.  
-If the `RawInput` is not set or empty, this part won't be tested.
-
-```cs
-public override Puzzle PartOne => new()
+```csharp
+public sealed class SolverTest
+    : TestEngine<Solver, int[], int>
 {
-    Example = new()
+    public override Puzzle PartOne => PuzzleBuilder
+        // ...
+        .WithTheActualSolutionBeing(5, skipTests: true); // Builder shortcut
+
+    public override Puzzle PartTwo => new()
     {
-        // 👇 Since this is defined, a test will run to check if `ParseInput(RawInput)` is equal to `Input`
-        RawInput = ["1", "2", "3"],
-        Input = [1, 2, 3],
-        Result = 3,
-    },
-    Solution = 5,
-};
+        // ...
+        ShouldSkipTests = true, // Direct property
+    };
+}
 ```
 
-> Since the example might change from one part to the other, the `RawInput` is defined in each part instead of on the puzzle-level
+Alternatively, you can **skip only the parsing step** (if you prefer to define the
+input as `TInput` directly) by using `PuzzleBuilder.FromParsedInput` or leaving
+`Example.RawInput` empty:
 
-## Troubleshooting
+```csharp
+public sealed class SolverTest
+    : TestEngine<Solver, int[], int>
+{
+    public override Puzzle PartOne => PuzzleBuilder
+        .FromParsedInput([1, 2, 3])
+        .ExpectsResult(3)
+        .WithTheActualSolutionBeing(5);
 
-### How can I find my cookie?
+    // ...
+}
+```
 
-Under the website of the [Advent of Code](https://adventofcode.com), open the dev tools and find the Advent of Code cookie in your storage:
+## Troubleshooting & FAQ
+
+<details>
+<summary><b>Why isn't this a NuGet package?</b></summary>
+
+This project is primarily intended to be used as a local template or library reference
+rather than a published NuGet package. The main reason for this is related to input
+retrieval from the official Advent of Code site.
+
+To automatically fetch your puzzle input remotely, the template requires your personal
+AoC session cookie.
+
+- If this library were published on NuGet, distributing it would require either
+  hardcoding the input retrieval logic that depends on a local file or environment
+  variable, or potentially handling cookie storage in a way that might raise
+  security/privacy concerns for some users.
+- By keeping the common components as an `AdventOfCode.Commons` project reference
+  within your repository, you retain full control over how your session cookie is
+  managed, preventing any information from being unintentionally included or
+  exposed.
+
+</details>
+
+<details>
+<summary><b>How can I find my AoC session cookie?</b></summary>
+
+Under the website of the [Advent of Code](https://adventofcode.com/), open the
+developer tools (usually `F12`) and inspect the application/storage tab to find
+the session cookie:
 
 ![Example](https://user-images.githubusercontent.com/22640284/205501479-31e2e5ef-d50e-43f8-8a45-4741a473861c.png)
 
 You can then copy its value.
 
-### Where can I set my cookie?
+</details>
 
-You can either provide the cookie as an environment variable named `AOC_COOKIE`, or directly set it in the `Configuration.cs` file:
+<details>
+<summary><b>Where can I set my cookie?</b></summary>
+
+You can either provide the cookie as an environment variable named `AOC_COOKIE`, or
+directly set it in the `Configuration.cs` file:
 
 ```csharp
 public static class Configuration
@@ -163,12 +186,22 @@ public static class Configuration
 }
 ```
 
-### My input is missing!
+</details>
 
-Be sure to have your input data accessible, you can do so by indicating how VS should take care of your file:
+<details>
+<summary><b>My input is missing!</b></summary>
+
+Be sure to have your input data accessible, you can do so by indicating how VS should
+take care of your file:
 
 ![image](https://user-images.githubusercontent.com/22640284/205364254-5e1b7995-d267-4809-8ffa-5e68efe84b84.png)
 
-### No tests are showing up!
+</details>
 
-Verify if your `TestEngine` implementation is `public` or `xUnit` might have some trouble finding it.
+<details>
+<summary><b>No tests are showing up!</b></summary>
+
+Verify if your `TestEngine` implementation is `public` or `xUnit` might have some
+trouble finding it.
+
+</details>
