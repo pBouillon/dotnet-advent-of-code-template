@@ -17,17 +17,17 @@ namespace AdventOfCode.Commons;
 ///
 /// <typeparam name="TResult">
 /// The type of the result of the puzzle
-/// </typeparam> 
+/// </typeparam>
 public abstract partial class TestEngine<TSolver, TInput, TResult>
     where TSolver : Solver<TInput, TResult>, new()
 {
-    [SkippableFact(DisplayName = "Part One - Parsing")]
+    [Fact(DisplayName = "Part One - Parsing")]
     public void PartOneParsingTest()
     {
         var shouldBeSkipped = PartOne.ShouldSkipTests
           || PartOne.Example.RawInput.Length == 0;
 
-        Skip.If(shouldBeSkipped, "Puzzle.ShouldSkipTests has been set to true or no raw input provided, test skipped");
+        Assert.SkipWhen(shouldBeSkipped, "Puzzle.ShouldSkipTests has been set to true or no raw input provided, test skipped");
 
         // Arrange
         var input = PartOne.Example.RawInput;
@@ -39,10 +39,10 @@ public abstract partial class TestEngine<TSolver, TInput, TResult>
         result.ShouldBeEquivalentTo(PartOne.Example.Input);
     }
 
-    [SkippableFact(DisplayName = "Part One - Example")]
+    [Fact(DisplayName = "Part One - Example")]
     public void PartOneExampleTest()
     {
-        Skip.If(PartOne.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
+        Assert.SkipWhen(PartOne.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
 
         // Arrange
         var input = PartOne.Example.Input;
@@ -54,10 +54,10 @@ public abstract partial class TestEngine<TSolver, TInput, TResult>
         result.ShouldBe(PartOne.Example.Result);
     }
 
-    [SkippableFact(DisplayName = "Part One - Solution")]
+    [Fact(DisplayName = "Part One - Solution")]
     public void PartOneSolutionTest()
     {
-        Skip.If(PartOne.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
+        Assert.SkipWhen(PartOne.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
 
         // Arrange
         var input = _solver.PuzzleInput;
