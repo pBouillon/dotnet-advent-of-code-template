@@ -40,26 +40,25 @@ public class RemotePuzzleInputReaderStrategy : IPuzzleInputReaderStrategy
     /// <summary>
     /// Create a new cookie container with the one set in <see cref="Configuration.CookieValue"/>
     /// </summary>
-    /// 
+    ///
     /// <returns>
     /// The cookie container for the <see cref="HttpClientHandler"/> to use
     /// </returns>
-    /// 
+    ///
     /// <exception cref="Exception">
     /// Thrown if it is called but <see cref="Configuration.CookieValue"/> is not set
     /// </exception>
     private static CookieContainer GetCookieContainer()
     {
-        var container = new CookieContainer();
-
-        container.Add(new Cookie
+        var cookie = Configuration.CookieValue?.Trim();
+        if (string.IsNullOrEmpty(cookie))
         {
-            Name = "session",
-            Domain = ".adventofcode.com",
-            Value = string.IsNullOrEmpty(Configuration.CookieValue)
-                ? throw new Exception("You need to specify your cookie in order to get your input puzzle")
-                : Configuration.CookieValue,
-        });
+            throw new InvalidOperationException(
+                "AOC_COOKIE is not set. Set it to your Advent of Code session cookie to fetch your puzzle input.");
+        }
+
+        var container = new CookieContainer();
+        container.Add(new Cookie("session", cookie, "/", ".adventofcode.com"));
 
         return container;
     }
