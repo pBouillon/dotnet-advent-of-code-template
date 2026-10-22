@@ -1,17 +1,32 @@
 ﻿namespace AdventOfCode.Commons;
 
 /// <summary>
-/// Configure the constants and values required for the application to run
+/// Settings read from environment variables.
 /// </summary>
 public static class Configuration
 {
     /// <summary>
-    /// Your session cookie, if you want to retrieve your input from the internet
+    /// The name of the environment variable holding an optional contact for the <c>User-Agent</c>.
     /// </summary>
-    ///
-    /// <remarks>
-    /// To get your cookie, head to https://adventofcode.com/, then look into the cookies
-    /// the website has set and paste its value here, it be something like <c>session:"[value]"</c>
-    /// </remarks>
-    public static string? CookieValue { get; } = Environment.GetEnvironmentVariable("AOC_COOKIE");
+    public const string ContactEnvironmentVariable = "AOC_CONTACT";
+
+    /// <summary>
+    /// The name of the environment variable holding the Advent of Code session cookie.
+    /// </summary>
+    public const string CookieEnvironmentVariable = "AOC_COOKIE";
+
+    /// <summary>
+    /// The name of the session cookie expected by the Advent of Code website.
+    /// </summary>
+    public const string SessionCookieName = "session";
+
+    /// <summary>
+    /// An optional contact for the <c>User-Agent</c>, read from <see cref="ContactEnvironmentVariable"/>.
+    /// </summary>
+    public static string? Contact { get; } = Environment.GetEnvironmentVariable(ContactEnvironmentVariable);
+
+    /// <summary>
+    /// The Advent of Code session cookie, read from <see cref="CookieEnvironmentVariable"/>.
+    /// </summary>
+    public static string? CookieValue { get; } = Environment.GetEnvironmentVariable(CookieEnvironmentVariable);
 }

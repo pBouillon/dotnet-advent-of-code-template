@@ -2,12 +2,17 @@
 
 namespace AdventOfCode.Usage.WithRemoteInput;
 
+/// <summary>
+/// Example of how to test a <see cref="Solver"/> whose input is downloaded from the website
+///
+/// Its tests are skipped so that the template never downloads an input
+/// </summary>
 public sealed class RemoteInputSolverTest
     : TestEngine<Solver, int[], int>
 {
     public override Puzzle PartOne => new()
     {
-        // Once your cookie set in Configuration.Cookie, you can safely toggle this flag
+        // Once your cookie is set (see the README) and the Solution below is yours, you can safely remove this flag
         ShouldSkipTests = true,
 
         Example = new()
@@ -20,7 +25,7 @@ public sealed class RemoteInputSolverTest
 
     public override Puzzle PartTwo => new()
     {
-        // Once your cookie set in Configuration.Cookie, you can safely toggle this flag
+        // Once your cookie is set (see the README) and the Solution below is yours, you can safely remove this flag
         ShouldSkipTests = true,
 
         Example = new()

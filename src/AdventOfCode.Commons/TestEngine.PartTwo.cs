@@ -1,4 +1,5 @@
 ﻿using Shouldly;
+
 using Xunit;
 
 namespace AdventOfCode.Commons;
@@ -45,10 +46,10 @@ public abstract partial class TestEngine<TSolver, TInput, TResult>
         Assert.SkipWhen(PartTwo.ShouldSkipTests, "Puzzle.ShouldSkipTests has been set to true, test skipped");
 
         // Arrange
-        var input = _solver.PuzzleInput;
+        var input = GetPuzzleInputOrSkip();
 
         // Act
-        var result = _solver.PartTwo(input.Value);
+        var result = _solver.PartTwo(input);
 
         // Assert
         result.ShouldBe(PartTwo.Solution);

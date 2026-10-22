@@ -1,4 +1,4 @@
-﻿using AdventOfCode.Commons.PuzzleInputReaderStrategy;
+﻿using System.Runtime.CompilerServices;
 
 namespace AdventOfCode.Commons;
 
@@ -21,32 +21,30 @@ public abstract class Solver<TInput, TResult>
     public readonly Lazy<TInput> PuzzleInput;
 
     /// <summary>
-    /// Create a new solver and initialize its puzzle input based on the provided <see cref="IPuzzleInputReaderStrategy"/>
+    /// Create a new solver and initialize its puzzle input based on the provided <see cref="PuzzleInputReader"/>
     /// </summary>
-    /// <param name="puzzleInputReader">The strategy to use to retriever the puzzle input</param>
-    private Solver(IPuzzleInputReaderStrategy puzzleInputReader)
+    /// <param name="puzzleInputReader">The reader to use to retrieve the puzzle input</param>
+    private Solver(PuzzleInputReader puzzleInputReader)
     {
-        PuzzleInput = new Lazy<TInput>(() =>
-        {
-            var content = puzzleInputReader.ReadInput();
-            return ParseInput(content);
-        });
+        PuzzleInput = new Lazy<TInput>(() => ParseInput(puzzleInputReader.ReadInput()));
     }
 
     /// <summary>
     /// Create a new solver with a puzzle input located in a local file
     /// </summary>
-    /// <param name="inputPath">The path to the file containing the input</param>
-    protected Solver(string inputPath)
-        : this(new LocalPuzzleInputReaderStrategy { InputPath = inputPath }) { }
+    /// <param name="inputPath">The path to the file containing the input, relative to the project's folder</param>
+    /// <param name="solverSourcePath">Filled in by the compiler: the solver's source file, used to locate its project</param>
+    protected Solver(string inputPath, [CallerFilePath] string solverSourcePath = "")
+        : this(PuzzleInputReader.ForFile(inputPath, solverSourcePath)) { }
 
     /// <summary>
-    /// Create a new solver that will retrieve the puzzle input from the server
+    /// Create a new solver whose puzzle input is downloaded once, then stored locally
     /// </summary>
     /// <param name="year">The year of the current challenge</param>
     /// <param name="day">The day for which the puzzle input is needed</param>
-    protected Solver(int year, int day)
-        : this(new RemotePuzzleInputReaderStrategy { Year = year, Day = day }) { }
+    /// <param name="solverSourcePath">Filled in by the compiler: the solver's source file, used to locate its project</param>
+    protected Solver(int year, int day, [CallerFilePath] string solverSourcePath = "")
+        : this(PuzzleInputReader.ForPuzzle(year, day, solverSourcePath)) { }
 
     /// <summary>
     /// Parse the input file and convert it to <typeparamref name="TInput"/>
