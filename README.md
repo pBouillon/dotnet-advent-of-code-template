@@ -6,7 +6,7 @@ This template's core strength is its foundation in **xUnit v3 test projects**, w
 
 Here are the features offered by the template:
 
-- **Automatic Input Retrieval** (local file, or fetched once from the website and kept in your project)
+- **Automatic Input Retrieval** (fetched once from the website and kept next to your solver, or read from a local file)
 - **Modeling/Parsing Tests** to allow you to model the problem as you want
 - **Example Tests** using provided examples and expected results to ensure your solution satisfies it
 - **Conditional Test Skipping** focus only on the parts you're currently working on, and let missing inputs skip themselves
@@ -34,11 +34,18 @@ Your `Solver` requires you to implement three core methods:
 2. **`PartOne`** : Implement the logic for the first part of the puzzle.
 3. **`PartTwo`** : Implement the logic for the second part of the puzzle.
 
+**Example Solver (Remote Input, recommended):**
+
+```csharp
+public class Solver()
+    : Solver<int[], int>(year: 2025, day: 01) { ... }
+```
+
 **Example Solver (Local Input):**
 
 ```csharp
 public class Solver()
-    : Solver<int[], int>(inputPath: "WithLocalInput/input.txt")
+    : Solver<int[], int>(inputPath: "input.txt")
 {
     public override int PartOne(int[] input)
         => input.Max();
@@ -51,23 +58,53 @@ public class Solver()
 }
 ```
 
-**Example Solver (Remote Input):**
-
-```csharp
-public class Solver()
-    : Solver<int[], int>(year: 2025, day: 01) { ... }
-```
-
 ### Getting Your Input
 
 Your solver gets its input one of two ways, depending on the constructor you call:
 
-- **From a file**: pass the path of your input, relative to your project's folder (the one holding the `.csproj`).
-- **From the website**: pass the year and the day. The first time it's needed, the input is downloaded with your session cookie and stored in `Inputs/<year>/day<DD>.txt` in your project. From then on, it's read from there: it is never fetched twice.
+- **From the website (recommended)**: pass the year and the day. The first time a solution test needs it, the input is downloaded with your session cookie and stored next to your solver, in `input.<year>-day<DD>.txt`. From then on, it's read from there: it is never fetched twice.
+- **From a file**: pass the path of your input, relative to your solver's folder (the one holding its `.cs` file).
 
 Either way, the input is only read when a **solution** test needs it. Parsing and example tests run without it.
 
-> Advent of Code asks not to share puzzle inputs, so keep them out of your repository: the template's `.gitignore` already ignores the `Inputs/` folder and `input*.txt` files.
+#### Setting up your cookie
+
+To download your inputs, the template needs your Advent of Code session cookie (see the FAQ below to find it). Store it once in an environment variable named `AOC_COOKIE`.
+
+**Bash / zsh**
+
+```bash
+# Keep it for every future terminal (use ~/.zshrc if you are on zsh)
+echo 'export AOC_COOKIE="your-cookie-value"' >> ~/.bashrc
+
+# Or only for the current terminal
+export AOC_COOKIE="your-cookie-value"
+```
+
+**PowerShell**
+
+```powershell
+# Keep it for your user account, for every future terminal
+setx AOC_COOKIE "your-cookie-value"
+
+# Or only for the current terminal
+$env:AOC_COOKIE = "your-cookie-value"
+```
+
+Then restart your IDE and terminal: they only read environment variables when they start, so the persistent options only apply to the ones you open afterwards.
+
+> Your session cookie is as good as being logged in to your account, so treat it like a password (and note that anything typed in a terminal ends up in your shell history). The template only reads it from the environment and never writes it anywhere, so there is nothing to accidentally commit.
+
+#### Local only
+
+Prefer the template to never reach the website? Skip the cookie entirely and save your input yourself from the puzzle page:
+
+- with the **file** constructor, `Solver<int[], int>(inputPath: "input.txt")`, the template never makes a network request;
+- or keep the **year and day** constructor and save the file next to your solver as `input.<year>-day<DD>.txt`: an existing file is always read as is, and the cookie is only used when it's missing.
+
+Without a cookie, a missing input simply skips your solution tests.
+
+> Advent of Code asks not to share puzzle inputs, so keep them out of your repository: the template's `.gitignore` already ignores every `input*.txt` file.
 
 ### Testing with the Fluent API
 
@@ -141,7 +178,7 @@ public sealed class SolverTest
 
 No flag needed here. When the **solution** test of a part can't find its input (no file at the given path, or no `AOC_COOKIE` to download it), it is skipped with a message telling you why. Your parsing and example tests still run, which is what keeps your CI green without your inputs.
 
-If the input *was* reachable but the download failed (expired cookie, puzzle not unlocked yet, no network...), the test fails instead, so a real problem never hides behind a skip.
+If the input _was_ reachable but the download failed (expired cookie, puzzle not unlocked yet, no network...), the test fails instead, so a real problem never hides behind a skip.
 
 ## Troubleshooting & FAQ
 
@@ -164,25 +201,18 @@ You can then copy its value.
 
 **Where can I set my cookie?**
 
-Set it as an environment variable named `AOC_COOKIE`:
-
-- **PowerShell:** `setx AOC_COOKIE "your-cookie-value"`
-- **Bash / zsh:** `export AOC_COOKIE="your-cookie-value"` (add it to your shell profile to keep it)
-
-Then restart your IDE or terminal: they only read environment variables when they start.
-
-The cookie is only needed when an input has to be downloaded, and the template never writes it anywhere, so there is nothing to accidentally commit.
+In the `AOC_COOKIE` environment variable, see [Setting up your cookie](#setting-up-your-cookie).
 
 **Where are my inputs stored?**
 
-- Inputs fetched from the website are stored in `Inputs/<year>/day<DD>.txt`, in your project's folder (next to the `.csproj`).
-- Inputs read from a file are wherever you pointed `inputPath` to, relative to that same folder.
+- Inputs fetched from the website are stored next to the solver that uses them, in `input.<year>-day<DD>.txt`.
+- Inputs read from a file are wherever you pointed `inputPath` to, relative to your solver's folder.
 
-Both are ignored by git. To fetch an input again (say it got corrupted), delete its file and run your tests.
+Both are ignored by git, as long as they are named `input*.txt`. To fetch an input again (say it got corrupted), delete its file and run your tests.
 
 **My input is missing!**
 
-Your solution tests are skipped with a "No puzzle input found" message. For a local input, check that the file exists and that the path given to your solver is relative to your project's folder. For a remote input, set your cookie, see above.
+Your solution tests are skipped, and the message tells you why. With "No puzzle input found", the file isn't where your solver looks: check that it exists and that the path given to your solver is relative to your solver's folder. With "AOC_COOKIE is not set", your input has to be downloaded: set your cookie (see [Setting up your cookie](#setting-up-your-cookie)), or save the input yourself (see [Local only](#local-only)).
 
 **My input can't be downloaded!**
 
@@ -192,7 +222,7 @@ The error includes the HTTP status. Make sure the puzzle is unlocked (inputs are
 
 Yes! The template follows the [automation guidelines](https://www.reddit.com/r/adventofcode/wiki/faqs/automation) of the /r/adventofcode community wiki:
 
-- Inputs are cached: once downloaded, they are read from your project and never fetched again.
+- Inputs are cached: once downloaded, they are read from disk and never fetched again.
 - Downloads are made one at a time, and only when a test needs an input.
 - Requests identify the template and give a contact in their `User-Agent`: the value of `AOC_CONTACT` if you set it, otherwise your git `user.email`, then your git `user.name`, then your machine's hostname.
 

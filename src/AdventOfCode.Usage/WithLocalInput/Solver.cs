@@ -12,7 +12,7 @@ namespace AdventOfCode.Usage.WithLocalInput;
 /// The second part aims to find the sum of all the numbers
 /// </summary>
 public sealed class Solver()
-    : Solver<int[], int>(inputPath: "WithLocalInput/input.txt")
+    : Solver<int[], int>(inputPath: "input.txt")
 {
     public override int PartOne(int[] input)
         => input.Max();

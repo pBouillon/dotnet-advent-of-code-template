@@ -32,17 +32,17 @@ public abstract class Solver<TInput, TResult>
     /// <summary>
     /// Create a new solver with a puzzle input located in a local file
     /// </summary>
-    /// <param name="inputPath">The path to the file containing the input, relative to the project's folder</param>
-    /// <param name="solverSourcePath">Filled in by the compiler: the solver's source file, used to locate its project</param>
+    /// <param name="inputPath">The path to the file containing the input, relative to the solver's folder</param>
+    /// <param name="solverSourcePath">Filled in by the compiler: the solver's source file, used to locate its folder</param>
     protected Solver(string inputPath, [CallerFilePath] string solverSourcePath = "")
         : this(PuzzleInputReader.ForFile(inputPath, solverSourcePath)) { }
 
     /// <summary>
-    /// Create a new solver whose puzzle input is downloaded once, then stored locally
+    /// Create a new solver whose puzzle input is downloaded once, then stored next to the solver
     /// </summary>
     /// <param name="year">The year of the current challenge</param>
     /// <param name="day">The day for which the puzzle input is needed</param>
-    /// <param name="solverSourcePath">Filled in by the compiler: the solver's source file, used to locate its project</param>
+    /// <param name="solverSourcePath">Filled in by the compiler: the solver's source file, used to locate its folder</param>
     protected Solver(int year, int day, [CallerFilePath] string solverSourcePath = "")
         : this(PuzzleInputReader.ForPuzzle(year, day, solverSourcePath)) { }
 
