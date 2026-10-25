@@ -71,7 +71,8 @@ internal static class AdventOfCodeClient
         if (string.IsNullOrEmpty(cookie))
         {
             throw new PuzzleInputUnavailableException(
-                $"{Configuration.CookieEnvironmentVariable} is not set. Set it to your Advent of Code session cookie to fetch your puzzle input.");
+                $"{Configuration.CookieEnvironmentVariable} is not set, neither as an environment variable nor in a {DotEnv.FileName} file. "
+                + "Set it to your Advent of Code session cookie to fetch your puzzle input.");
         }
 
         var container = new CookieContainer();
