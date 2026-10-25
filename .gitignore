@@ -3,8 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+.env
+
 # Puzzle inputs
-*.txt
+input*.txt
 
 # User-specific files
 *.rsuser

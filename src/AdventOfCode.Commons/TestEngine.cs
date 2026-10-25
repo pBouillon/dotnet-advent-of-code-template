@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Commons;
+﻿using Xunit;
+
+namespace AdventOfCode.Commons;
 
 /// <summary>
 /// Test engine for the implemented <typeparamref name="TSolver"/>
@@ -15,4 +17,20 @@ public abstract partial class TestEngine<TSolver, TInput, TResult>
     public abstract Puzzle PartOne { get; }
 
     public abstract Puzzle PartTwo { get; }
+
+    /// <summary>
+    /// Returns the puzzle input, skipping the running test if it is unavailable.
+    /// </summary>
+    private TInput GetPuzzleInputOrSkip()
+    {
+        try
+        {
+            return _solver.PuzzleInput.Value;
+        }
+        catch (PuzzleInputUnavailableException exception)
+        {
+            Assert.Skip(exception.Message);
+            throw;
+        }
+    }
 }

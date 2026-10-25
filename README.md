@@ -1,207 +1,311 @@
-# 🎄 .NET Advent of Code Template
+# .NET Advent of Code Template
 
-**A ready-to-go **Advent of Code** template for .NET contenders.**
-**Focus on solving the puzzle; we handle the boilerplate, input, and testing.**
+A small template for solving [Advent of Code][aoc] puzzles in C#. Each puzzle
+is a test class: you write the solver, describe the example from the puzzle
+statement, and run it from your IDE.
 
-This template's core strength is its foundation in **xUnit test projects**, which
-provides two massive advantages for complex AoC puzzles: **seamless debugging** and native support for **Test-Driven Development (TDD)**.
+## What it does for you
 
-Here are the features offered by the template:
+- **Checks each step separately.** Parsing, the puzzle's example and your real
+  answer are three tests per part, so a failure tells you which step is wrong.
+- **Fetches your input once.** It is downloaded with your session cookie,
+  saved next to your solver and never requested again. You can also point to a
+  file you saved yourself.
+- **Skips what isn't ready.** A part you haven't started, or an input you
+  don't have: those tests are skipped and the others still run.
+- **Works with your IDE.** It is a regular xUnit v3 project: set breakpoints,
+  run a single test, re-run on save.
 
-* **Automatic Input Retrieval** (local file or remotely fetches your input for a given day)
-* **Modeling/Parsing Tests** to allow you to model the problem as you want
-* **Example Tests** using provided examples and expected results to ensure your solution satisfies it
-* **Conditional Test Skipping** focus only on the parts you're currently working on
-* Pre-configured **[.NET CI](.github/workflows/dotnet.yml)** to ensure all puzzles are valid
+> If this template helps you earn your stars, consider leaving one on this
+> repository too! ⭐
 
-> If this template helps you earn your stars, consider leaving one on this repository
-> too! ⭐
+## Getting started
 
-## Usage & Setup
+**Requirements:** the [.NET 10 SDK][dotnet].
 
-This template provides two core components: the **`Solver`** (for logic) and the
-**`TestEngine`** (for verification).
+1. Create an **xUnit v3** project (one per year works well) and reference the
+   `AdventOfCode.Commons` project.
+2. Add a solver and its test, as below.
+3. [Set your session cookie](#setting-your-cookie), or
+   [use a file](#getting-your-input) instead.
+4. Run `dotnet test`, or run the tests from your IDE.
 
-**Setup:** To begin a new year, simply create a new **`xUnit`** project and add a
-reference to the **`AdventOfCode.Commons`** library.
+`AdventOfCode.Commons` is plain source in your repository, so you can change
+anything in it. A complete example lives in the [demo project][demo].
 
-> If you want to jump straight to the code, check out the
-> [demo project](src/AdventOfCode.Usage).
+### The solver
 
-### Solving a New Puzzle
-
-Create a new solver by inheriting the generic `Solver<TInput, TResult>` class,
-where `TInput` is your parsed data model and `TResult` is the expected result type.
-
-Your `Solver` requires you to implement three core methods:
-
-1.  **`ParseInput`**: Convert raw `IEnumerable<string>` input lines into your strongly-typed `TInput` model.
-2.  **`PartOne`**: Implement the logic for the first part of the puzzle.
-3.  **`PartTwo`**: Implement the logic for the second part of the puzzle.
-
-**Example Solver (Local Input):**
+Inherit `Solver<TInput, TResult>`, where `TInput` is the shape you parse the
+input into and `TResult` the type of your answers, then implement
+`ParseInput`, `PartOne` and `PartTwo`:
 
 ```csharp
-public class Solver()
-    : Solver<int[], int>(inputPath: "WithLocalInput/input.txt")
+public sealed class Solver()
+    : Solver<int[], int>(year: 2021, day: 1)
 {
+    public override int[] ParseInput(IEnumerable<string> input)
+        => [.. input.Select(int.Parse)];
+
     public override int PartOne(int[] input)
-        => input.Max();
+    {
+        var count = 0;
+
+        for (var i = 1; i < input.Length; ++i)
+        {
+            if (input[i - 1] < input[i]) ++count;
+        }
+
+        return count;
+    }
 
     public override int PartTwo(int[] input)
-        => input.Sum();
+    {
+        var windowSums = Enumerable.Range(0, input.Length - 2)
+            .Select(offset => input[offset..(offset + 3)].Sum())
+            .ToArray();
 
-    public override int[] ParseInput(IEnumerable<string> input)
-        => input.Select(int.Parse).ToArray();
+        return PartOne(windowSums);
+    }
 }
 ```
 
-**Example Solver (Remote Input):**
+### The test
 
-```csharp
-public class Solver()
-    : Solver<int[], int>(year: 2025, day: 01) { ... }
-```
-
-### Testing with the Fluent API
-
-Once you have implemented your `Solver`, create your test class by inheriting from
-`TestEngine<TSolver, TInput, TResult>`.
-
-You will define the expected inputs and solutions via the `PartOne` and `PartTwo`
-properties.
+Inherit `TestEngine<TSolver, TInput, TResult>` and describe each part:
 
 ```csharp
 public sealed class SolverTest : TestEngine<Solver, int[], int>
 {
-    // Define Part One using the fluent builder
     public override Puzzle PartOne => PuzzleBuilder
-        // 1. The raw input lines for the example
-        .FromInput(["1", "2", "3"])
-        // 2. The expected result of the ParseInput method (TInput)
-        .ParsedAs([1, 2, 3])
-        // 3. The expected result for the example input
-        .ExpectsResult(3)
-        // 4. The correct answer for the main puzzle input
-        .WithTheActualSolutionBeing(5);
+        // The example's raw lines, as written in the puzzle statement
+        .FromInput([
+            "199", "200", "208", "210", "200",
+            "207", "240", "269", "260", "263",
+        ])
+        // What ParseInput should return for them
+        .ParsedAs([199, 200, 208, 210, 200, 207, 240, 269, 260, 263])
+        // The example's expected answer
+        .ExpectsResult(7)
+        // The answer for your own input, once Advent of Code accepted it
+        .WithTheActualSolutionBeing(0);
 
-    // You can also directly create the Puzzle object
-    public override Puzzle PartTwo => new()
-    {
-        Example = new()
-        {
-            Input = new[] { 1, 2, 3 },
-            Result = 6,
-        },
-        Solution = 15,
-    };
+    public override Puzzle PartTwo => PuzzleBuilder
+        // Gives the parsed example directly, which skips the parsing test
+        .FromParsedInput([199, 200, 208, 210, 200, 207, 240, 269, 260, 263])
+        .ExpectsResult(5)
+        .WithTheActualSolutionBeing(0);
 }
 ```
 
-### Skipping Tests
+Fill in `WithTheActualSolutionBeing` once Advent of Code accepts your answer.
+Until then that one test fails, while the Parsing and Example tests already
+tell you whether you are on the right track.
 
-If you are stuck on a puzzle part, you can conditionally **skip all tests** for
-that part by using the builder, or setting `ShouldSkipTests = true` on the `Puzzle`
-definition:
+You can also create the `Puzzle` directly, with an `Example` (`RawInput`,
+`Input`, `Result`) and a `Solution`. `RawInput` enables the parsing test.
+
+## Getting your input
+
+Your solver's constructor decides where its input comes from:
+
+- **`year` and `day`**: the input is downloaded the first time a solution test
+  needs it, saved next to the solver as `input.<year>-day<DD>.txt` (for
+  example `input.2021-day01.txt`), and read from that file from then on.
+- **`inputPath`**: the input is read from a file you saved yourself, relative
+  to the solver's folder. No cookie and no network request involved.
+
+Parsing and example tests never need the input. When it isn't available (no
+file, and no cookie to download it), only the solution tests are skipped, with
+a message telling you why. If a download was attempted and failed, the test
+fails instead.
+
+### Setting your cookie
+
+Downloads need your Advent of Code session cookie (see the [FAQ](#faq) to find
+it). Store it in an environment variable named `AOC_COOKIE`:
+
+**Bash / zsh**
+
+```bash
+# Keep it for every future terminal (use ~/.zshrc if you are on zsh)
+echo 'export AOC_COOKIE="your-cookie-value"' >> ~/.bashrc
+
+# Or only for the current terminal
+export AOC_COOKIE="your-cookie-value"
+```
+
+**PowerShell**
+
+```powershell
+# Keep it for your user account, for every future terminal
+setx AOC_COOKIE "your-cookie-value"
+
+# Or only for the current terminal
+$env:AOC_COOKIE = "your-cookie-value"
+```
+
+Restart your IDE and terminal afterwards: they only read environment variables
+when they start.
+
+Prefer a file? Put it in a `.env` file, see [Configuration](#configuration).
+
+> The cookie is as good as being logged in, so treat it like a password. The
+> template's `.gitignore` ignores `.env`, and also your inputs (`input*.txt`),
+> since Advent of Code asks people not to share them.
+
+## Configuration
+
+Two settings are available. Each one can be an environment variable or an entry
+in a `.env` file, and the environment variable wins when both are set.
+
+| Setting       | Needed        | What it does                            |
+| ------------- | ------------- | --------------------------------------- |
+| `AOC_COOKIE`  | For downloads | Your Advent of Code session cookie      |
+| `AOC_CONTACT` | No            | Contact sent in the `User-Agent` header |
+
+`AOC_CONTACT` is how Advent of Code can reach you if your requests ever cause
+trouble: an email, a name or a URL all work. When it isn't set, the template
+uses your git `user.email`, then your git `user.name`, then your machine's
+hostname. Accents and other non-ASCII characters are dropped, as HTTP headers
+only allow ASCII.
+
+Example `.env`:
+
+```dotenv
+# Advent of Code
+AOC_COOKIE=your-cookie-value
+AOC_CONTACT=you@example.com
+```
+
+Put it at the root of your repository (any folder above your project works
+too) and keep it out of git: the template's `.gitignore` already ignores it.
+The nearest file that defines a setting wins. The format is:
+
+- one `KEY=VALUE` per line;
+- `#` starts a comment, on its own line;
+- an `export ` prefix is accepted;
+- values can be wrapped in single or double quotes.
+
+Variable expansion and multi-line values aren't supported.
+
+## Skipping tests
+
+Stuck on a part? Skip all of its tests with `ShouldSkipTests = true` on the
+`Puzzle`, or `skipTests: true` at the end of the builder:
 
 ```csharp
-public sealed class SolverTest
-    : TestEngine<Solver, int[], int>
-{
-    public override Puzzle PartOne => PuzzleBuilder
-        // ...
-        .WithTheActualSolutionBeing(5, skipTests: true); // Builder shortcut
-
-    public override Puzzle PartTwo => new()
-    {
-        // ...
-        ShouldSkipTests = true, // Direct property
-    };
-}
+.WithTheActualSolutionBeing(5, skipTests: true)
 ```
 
-Alternatively, you can **skip only the parsing step** (if you prefer to define the
-input as `TInput` directly) by using `PuzzleBuilder.FromParsedInput` or leaving
-`Example.RawInput` empty:
-
-```csharp
-public sealed class SolverTest
-    : TestEngine<Solver, int[], int>
-{
-    public override Puzzle PartOne => PuzzleBuilder
-        .FromParsedInput([1, 2, 3])
-        .ExpectsResult(3)
-        .WithTheActualSolutionBeing(5);
-
-    // ...
-}
-```
-
-## Troubleshooting & FAQ
+## FAQ
 
 <details>
-<summary><b>Why isn't this a NuGet package?</b></summary>
+<summary>
+Why isn't this a NuGet package?
+</summary>
 
-This project is primarily intended to be used as a local template or library reference
-rather than a published NuGet package. The main reason for this is related to input
-retrieval from the official Advent of Code site.
-
-To automatically fetch your puzzle input remotely, the template requires your personal
-AoC session cookie.
-
-- If this library were published on NuGet, distributing it would require either
-  hardcoding the input retrieval logic that depends on a local file or environment
-  variable, or potentially handling cookie storage in a way that might raise
-  security/privacy concerns for some users.
-- By keeping the common components as an `AdventOfCode.Commons` project reference
-  within your repository, you retain full control over how your session cookie is
-  managed, preventing any information from being unintentionally included or
-  exposed.
+The template needs your personal session cookie to fetch inputs. Keeping
+`AdventOfCode.Commons` as a project reference inside your repository means you
+stay in control of how that cookie is managed, so nothing is unintentionally
+included or exposed through a shared package. It also lets you change the
+library however you like.
 
 </details>
 
 <details>
-<summary><b>How can I find my AoC session cookie?</b></summary>
+<summary>
+How can I find my AoC session cookie?
+</summary>
 
-Under the website of the [Advent of Code](https://adventofcode.com/), open the
-developer tools (usually `F12`) and inspect the application/storage tab to find
-the session cookie:
+Log in to [adventofcode.com][aoc], open your browser's developer tools
+(usually `F12`) and look in the Application or Storage tab for the `session`
+cookie:
 
-![Example](https://user-images.githubusercontent.com/22640284/205501479-31e2e5ef-d50e-43f8-8a45-4741a473861c.png)
+[![Example][cookie-image]][cookie-image]
 
-You can then copy its value.
-
-</details>
-
-<details>
-<summary><b>Where can I set my cookie?</b></summary>
-
-You can either provide the cookie as an environment variable named `AOC_COOKIE`, or
-directly set it in the `Configuration.cs` file:
-
-```csharp
-public static class Configuration
-{
-    public readonly static string? CookieValue = "YOUR-COOKIE-HERE";
-}
-```
+Then copy its value.
 
 </details>
 
 <details>
-<summary><b>My input is missing!</b></summary>
+<summary>
+Where can I set my cookie?
+</summary>
 
-Be sure to have your input data accessible, you can do so by indicating how VS should
-take care of your file:
-
-![image](https://user-images.githubusercontent.com/22640284/205364254-5e1b7995-d267-4809-8ffa-5e68efe84b84.png)
+In the `AOC_COOKIE` environment variable or in a `.env` file, see
+[Setting your cookie](#setting-your-cookie).
 
 </details>
 
 <details>
-<summary><b>No tests are showing up!</b></summary>
+<summary>
+Where are my inputs stored?
+</summary>
 
-Verify if your `TestEngine` implementation is `public` or `xUnit` might have some
-trouble finding it.
+- Downloaded inputs are saved next to the solver that uses them, as
+  `input.<year>-day<DD>.txt`.
+- Inputs read from a file are wherever you pointed `inputPath` to, relative to
+  the solver's folder.
+
+Both are ignored by git, as long as they are named `input*.txt`. To download
+an input again, delete its file and run your tests.
 
 </details>
+
+<details>
+<summary>
+My input is missing!
+</summary>
+
+Your solution tests are skipped, and the message says why. With "No puzzle
+input found", the file isn't where your solver looks: check that it exists and
+that the path is relative to the solver's folder. With "AOC_COOKIE is not
+set", the input has to be downloaded: set your cookie, or save the input
+yourself and use `inputPath`.
+
+</details>
+
+<details>
+<summary>
+My input can't be downloaded!
+</summary>
+
+The error includes the HTTP status. Check that the puzzle is unlocked (inputs
+are released at midnight EST) and that your cookie hasn't expired: log in to
+Advent of Code again to get a fresh one.
+
+</details>
+
+<details>
+<summary>
+Does this respect the Advent of Code automation guidelines?
+</summary>
+
+Yes! The template follows the [automation guidelines][guidelines]:
+
+- Inputs are cached: once downloaded, they are read from disk and never
+  requested again.
+- Downloads are made one at a time, and only when a test needs an input.
+- Requests carry a `User-Agent` naming this template and a contact:
+  `AOC_CONTACT` if you set it (environment variable or `.env`), otherwise your
+  git `user.email`, then your git `user.name`, then your machine's hostname.
+
+Set `AOC_CONTACT` if you'd rather not send your git email.
+
+</details>
+
+<details>
+<summary>
+No tests are showing up!
+</summary>
+
+Make sure your test class is `public`. xUnit v3 runs on Microsoft Testing
+Platform, so keep your IDE up to date (Visual Studio 17.14 or later).
+
+</details>
+
+[aoc]: https://adventofcode.com
+[dotnet]: https://dotnet.microsoft.com/download
+[demo]: https://github.com/pBouillon/dotnet-advent-of-code-template/blob/main/src/AdventOfCode.Usage
+[guidelines]: https://www.reddit.com/r/adventofcode/wiki/faqs/automation
+[cookie-image]: https://user-images.githubusercontent.com/22640284/205501479-31e2e5ef-d50e-43f8-8a45-4741a473861c.png
